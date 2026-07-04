@@ -8,7 +8,7 @@ import json
 
 st.set_page_config(
     page_title="ZARA HOME VISION",
-    page_icon="🏺",
+    page_icon="logo.png",
     layout="centered"
 )
 
