@@ -155,7 +155,14 @@ with col2:
                 )
 
             if producto:
-                st.image(mejor_imagen, caption="Imagen oficial más parecida", use_container_width=True)
+                try:
+                    st.image(
+                        mejor_imagen,
+                        caption="Imagen oficial más parecida",
+                        use_container_width=True
+                    )
+                except:
+                    st.info("Imagen oficial no disponible en la versión online.")
 
                 st.markdown(f'<div class="card-title">{producto["nombre"]}</div>', unsafe_allow_html=True)
 
