@@ -86,11 +86,13 @@ st.markdown("""
 st.markdown('<div class="logo">ZARA HOME</div>', unsafe_allow_html=True)
 st.markdown('<div class="vision">VISION</div>', unsafe_allow_html=True)
 
+
 @st.cache_resource
 def cargar_ia():
     modelo = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
     procesador = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
     return modelo, procesador
+
 
 @st.cache_data
 def cargar_datos():
@@ -101,6 +103,7 @@ def cargar_datos():
         catalogo = json.load(archivo)
 
     return base_vectores, catalogo
+
 
 modelo, procesador = cargar_ia()
 base_vectores, catalogo = cargar_datos()
@@ -136,7 +139,6 @@ with col2:
 
                 mejor_score = -1
                 mejor_referencia = ""
-                mejor_imagen = ""
 
                 for item in base_vectores:
                     score = torch.matmul(
@@ -147,7 +149,6 @@ with col2:
                     if score > mejor_score:
                         mejor_score = score
                         mejor_referencia = item["referencia"]
-                        mejor_imagen = item["ruta"]
 
                 producto = next(
                     (p for p in catalogo if p["referencia"] == mejor_referencia),
@@ -155,26 +156,38 @@ with col2:
                 )
 
             if producto:
-                try:
+                if producto.get("imagenes") and len(producto["imagenes"]) > 0:
                     st.image(
-                        mejor_imagen,
-                        caption="Imagen oficial más parecida",
+                        producto["imagenes"][0],
+                        caption="Imagen oficial del producto",
                         use_container_width=True
                     )
-                except:
-                    st.info("Imagen oficial no disponible en la versión online.")
+                else:
+                    st.info("Imagen oficial no disponible.")
 
-                st.markdown(f'<div class="card-title">{producto["nombre"]}</div>', unsafe_allow_html=True)
+                st.markdown(
+                    f'<div class="card-title">{producto["nombre"]}</div>',
+                    unsafe_allow_html=True
+                )
 
                 st.markdown('<div class="label">REFERENCIA</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="value">{producto["referencia"]}</div>', unsafe_allow_html=True)
+                st.markdown(
+                    f'<div class="value">{producto["referencia"]}</div>',
+                    unsafe_allow_html=True
+                )
 
                 st.markdown('<div class="label">PRECIO</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="price">{producto["precio"]}</div>', unsafe_allow_html=True)
+                st.markdown(
+                    f'<div class="price">{producto["precio"]}</div>',
+                    unsafe_allow_html=True
+                )
 
                 st.markdown('<div class="label">COINCIDENCIA VISUAL</div>', unsafe_allow_html=True)
                 st.progress(float(mejor_score))
-                st.markdown(f'<div class="value">{round(mejor_score * 100, 2)}%</div>', unsafe_allow_html=True)
+                st.markdown(
+                    f'<div class="value">{round(mejor_score * 100, 2)}%</div>',
+                    unsafe_allow_html=True
+                )
 
                 st.link_button(
                     "VER PRODUCTO EN ZARA HOME",
