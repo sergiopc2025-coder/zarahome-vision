@@ -14,7 +14,7 @@ CIRCLE_LOGO = "logo_circulo.png"
 
 st.set_page_config(
     page_title="ZARA HOME VISION",
-    page_icon=HEADER_LOGO,
+    page_icon=CIRCLE_LOGO,
     layout="wide",
 )
 
@@ -28,8 +28,22 @@ st.markdown("""
 
 .block-container {
     max-width: 1240px;
-    padding-top: 16px;
+    padding-top: 8px;
     padding-bottom: 46px;
+}
+
+[data-testid="stImage"] {
+    display: flex;
+    justify-content: center;
+}
+
+.logo-arriba {
+    margin-bottom: -18px;
+}
+
+.logo-arriba img {
+    width: min(1040px, 98vw) !important;
+    max-width: 1040px !important;
 }
 
 [data-testid="stVerticalBlockBorderWrapper"] {
@@ -78,6 +92,26 @@ h2, h3 {
 [data-testid="stFileUploader"] small {
     display: none;
 }
+
+@media (max-width: 700px) {
+    .block-container {
+        padding-top: 0px;
+    }
+
+    .logo-arriba {
+        margin-bottom: -34px;
+    }
+
+    .logo-arriba img {
+        width: min(1180px, 116vw) !important;
+        max-width: none !important;
+    }
+
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        padding: 24px 20px 24px 20px;
+        min-height: auto;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -109,13 +143,12 @@ def cargar_datos():
 
 try:
     logo = Image.open(HEADER_LOGO)
-    _, centro, _ = st.columns([1, 3, 1])
-    with centro:
-        st.image(logo, use_container_width=True)
+    st.markdown('<div class="logo-arriba">', unsafe_allow_html=True)
+    st.image(logo, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 except Exception:
     st.markdown("# ZARA HOME VISION")
 
-st.write("")
 st.write("")
 
 
