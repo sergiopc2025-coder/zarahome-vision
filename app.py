@@ -138,11 +138,11 @@ with col1:
             st.markdown("### 📷")
 
         with title_col:
-            st.markdown("## BUSCA POR IMAGEN")
+            st.markdown("## BÚSQUEDA POR IMAGEN")
 
         st.divider()
 
-        st.write("Sube una foto o usa la camara para identificar un producto.")
+        st.write("Sube una foto o usa la cámara para identificar un producto.")
 
         upload_box = st.container(border=True)
         with upload_box:
@@ -152,14 +152,14 @@ with col1:
                 with logo_col:
                     st.image(circle_logo, use_container_width=True)
             except Exception:
-                st.info("Guarda el logo del circulo como logo_circulo.png junto a app.py")
+                st.info("Guarda el logo del círculo como logo_circulo.png junto a app.py")
 
             st.markdown(
                 "<h3 style='text-align:center; margin-bottom:0;'>Selecciona una imagen</h3>",
                 unsafe_allow_html=True,
             )
             st.markdown(
-                "<p style='text-align:center; color:#666;'>Pulsa abajo para elegir galeria o camara</p>",
+                "<p style='text-align:center; color:#666;'>Pulsa abajo para elegir galería o cámara</p>",
                 unsafe_allow_html=True,
             )
 
@@ -259,6 +259,6 @@ with col2:
                     unsafe_allow_html=True,
                 )
                 st.markdown(
-                    "<p style='text-align:center; color:#666;'>El producto identificado aparecera aqui.</p>",
+                    "<p style='text-align:center; color:#666;'>El producto identificado aparecerá aquí.</p>",
                     unsafe_allow_html=True,
                 )
