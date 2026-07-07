@@ -9,7 +9,7 @@ from transformers import CLIPModel, CLIPProcessor
 
 
 HEADER_LOGO = "logo.png"
-CIRCLE_LOGO = "assets/logo_circulo.png"
+CIRCLE_LOGO = "logo_circulo.png"
 
 
 st.set_page_config(
@@ -73,6 +73,10 @@ h2, h3 {
     border-radius: 9px !important;
     border: none !important;
     font-weight: 700 !important;
+}
+
+[data-testid="stFileUploader"] small {
+    display: none;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -144,40 +148,24 @@ with col1:
         with upload_box:
             try:
                 circle_logo = Image.open(CIRCLE_LOGO)
+                _, logo_col, _ = st.columns([1.35, 1, 1.35])
+                with logo_col:
+                    st.image(circle_logo, use_container_width=True)
             except Exception:
-                circle_logo = Image.open(HEADER_LOGO)
-
-            _, logo_col, _ = st.columns([1.4, 1, 1.4])
-            with logo_col:
-                st.image(circle_logo, use_container_width=True)
+                st.info("Guarda el logo del circulo como logo_circulo.png junto a app.py")
 
             st.markdown(
                 "<h3 style='text-align:center; margin-bottom:0;'>Selecciona una imagen</h3>",
                 unsafe_allow_html=True,
             )
             st.markdown(
-                "<p style='text-align:center; color:#666;'>Elige galeria o camara</p>",
+                "<p style='text-align:center; color:#666;'>Pulsa abajo para elegir galeria o camara</p>",
                 unsafe_allow_html=True,
             )
 
-        opcion = st.selectbox(
-            "Selecciona una imagen",
-            ["Selecciona una imagen", "Usar una imagen de mi galeria", "Usar la camara"],
-            label_visibility="collapsed",
-        )
-
-        imagen_fuente = None
-
-        if opcion == "Usar una imagen de mi galeria":
             imagen_fuente = st.file_uploader(
                 "Selecciona una imagen",
                 type=["jpg", "jpeg", "png"],
-                label_visibility="collapsed",
-            )
-
-        elif opcion == "Usar la camara":
-            imagen_fuente = st.camera_input(
-                "Haz una foto",
                 label_visibility="collapsed",
             )
 
