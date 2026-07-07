@@ -1,3 +1,4 @@
+import base64
 import json
 import pickle
 
@@ -8,9 +9,13 @@ from PIL import Image
 from transformers import CLIPModel, CLIPProcessor
 
 
+HEADER_LOGO = "logo.png"
+CIRCLE_LOGO = "assets/logo_circulo.png"
+
+
 st.set_page_config(
     page_title="ZARA HOME VISION",
-    page_icon="logo.png",
+    page_icon=HEADER_LOGO,
     layout="wide",
 )
 
@@ -25,13 +30,21 @@ st.markdown(
 
     .block-container {
         max-width: 1240px;
-        padding-top: 28px;
+        padding-top: 18px;
         padding-bottom: 46px;
     }
 
-    [data-testid="stImage"] {
+    .top-logo-wrap {
         display: flex;
         justify-content: center;
+        align-items: center;
+        margin: 0 auto 18px auto;
+    }
+
+    .top-logo {
+        width: min(980px, 94vw);
+        height: auto;
+        display: block;
     }
 
     [data-testid="stVerticalBlockBorderWrapper"] {
@@ -45,12 +58,12 @@ st.markdown(
 
     .brand-fallback {
         text-align: center;
-        margin-bottom: 38px;
+        margin-bottom: 18px;
     }
 
     .brand-title {
         font-family: Georgia, "Times New Roman", serif;
-        font-size: 84px;
+        font-size: 92px;
         font-weight: 400;
         line-height: .9;
         letter-spacing: -2px;
@@ -127,8 +140,8 @@ st.markdown(
     }
 
     .upload-circle {
-        width: 58px;
-        height: 58px;
+        width: 116px;
+        height: 116px;
         border-radius: 999px;
         border: 1px solid #d8d8d8;
         display: flex;
@@ -136,6 +149,14 @@ st.markdown(
         justify-content: center;
         margin: 0 auto 14px auto;
         background: #ffffff;
+        overflow: hidden;
+    }
+
+    .upload-circle img {
+        width: 104px;
+        max-width: 104px;
+        height: auto;
+        display: block;
     }
 
     .upload-main {
@@ -171,23 +192,6 @@ st.markdown(
     .empty-text {
         color: #666666;
         font-size: 16px;
-    }
-
-    .or-divider {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        margin: 18px 0;
-        color: #111111;
-        justify-content: center;
-    }
-
-    .or-divider:before,
-    .or-divider:after {
-        content: "";
-        height: 1px;
-        background: #d7d7d7;
-        flex: 1;
     }
 
     .product-title {
@@ -245,6 +249,14 @@ st.markdown(
     }
 
     @media (max-width: 900px) {
+        .block-container {
+            padding-top: 12px;
+        }
+
+        .top-logo-wrap {
+            margin-bottom: 14px;
+        }
+
         .brand-title {
             font-size: 54px;
         }
@@ -284,6 +296,15 @@ st.markdown(
 )
 
 
+def asset_data_uri(path):
+    try:
+        with open(path, "rb") as archivo:
+            encoded = base64.b64encode(archivo.read()).decode("utf-8")
+        return f"data:image/png;base64,{encoded}"
+    except Exception:
+        return ""
+
+
 def svg_camera():
     return """
     <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2">
@@ -298,16 +319,6 @@ def svg_search():
     <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="7"/>
         <path d="M20 20l-4.4-4.4"/>
-    </svg>
-    """
-
-
-def svg_upload():
-    return """
-    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 16V7"/>
-        <path d="M8 11l4-4 4 4"/>
-        <path d="M20 16.5A4.5 4.5 0 0 0 15.5 12h-1A6 6 0 1 0 4 16.5"/>
     </svg>
     """
 
@@ -346,10 +357,18 @@ def cargar_datos():
     return base_vectores, catalogo
 
 
-try:
-    logo = Image.open("logo.png")
-    st.image(logo, width=760)
-except Exception:
+header_logo_uri = asset_data_uri(HEADER_LOGO)
+
+if header_logo_uri:
+    st.markdown(
+        f"""
+        <div class="top-logo-wrap">
+            <img class="top-logo" src="{header_logo_uri}">
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
     st.markdown(
         """
         <div class="brand-fallback">
@@ -377,39 +396,45 @@ col1, col2 = st.columns(2, gap="large")
 
 with col1:
     with card_container():
+        circle_logo_uri = asset_data_uri(CIRCLE_LOGO) or asset_data_uri(HEADER_LOGO)
+        circle_logo_html = f'<img src="{circle_logo_uri}">' if circle_logo_uri else ""
+
         st.markdown(
             f"""
             <div class="section-head">
                 <div class="icon-bubble">{svg_camera()}</div>
                 <h2 class="section-title">BUSCA POR IMAGEN</h2>
             </div>
+
             <p class="helper-text">Sube una foto o usa la camara para identificar un producto.</p>
+
             <div class="upload-visual">
-                <div class="upload-circle">{svg_upload()}</div>
+                <div class="upload-circle">
+                    {circle_logo_html}
+                </div>
                 <div class="upload-main">Selecciona una imagen</div>
-                <div class="upload-sub">JPG, JPEG, PNG · Max. 200MB</div>
+                <div class="upload-sub">Elige galeria o camara</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        modo = st.radio(
-            "Elige una opcion",
-            ["Subir imagen", "Usar camara"],
-            horizontal=True,
+        opcion = st.selectbox(
+            "Selecciona una imagen",
+            ["Selecciona una imagen", "Usar una imagen de mi galeria", "Usar la camara"],
             label_visibility="collapsed",
         )
 
         imagen_fuente = None
 
-        if modo == "Subir imagen":
+        if opcion == "Usar una imagen de mi galeria":
             imagen_fuente = st.file_uploader(
-                "Subir imagen",
+                "Selecciona una imagen",
                 type=["jpg", "jpeg", "png"],
                 label_visibility="collapsed",
             )
 
-        if modo == "Usar camara":
+        elif opcion == "Usar la camara":
             imagen_fuente = st.camera_input(
                 "Haz una foto",
                 label_visibility="collapsed",
@@ -446,6 +471,7 @@ with col1:
 
                     st.session_state.producto = producto
                     st.session_state.score = mejor_score
+
 
 with col2:
     with card_container():
