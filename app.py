@@ -1,6 +1,7 @@
 import base64
 import json
 import pickle
+from textwrap import dedent
 
 import streamlit as st
 import torch
@@ -20,280 +21,226 @@ st.set_page_config(
 )
 
 
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background: #ffffff;
-        color: #111111;
-    }
+def html(content):
+    st.markdown(dedent(content).strip(), unsafe_allow_html=True)
 
+
+html("""
+<style>
+.stApp {
+    background: #ffffff;
+    color: #111111;
+}
+
+.block-container {
+    max-width: 1240px;
+    padding-top: 18px;
+    padding-bottom: 46px;
+}
+
+.top-logo-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 18px auto;
+}
+
+.top-logo {
+    width: min(980px, 94vw);
+    height: auto;
+    display: block;
+}
+
+[data-testid="stVerticalBlockBorderWrapper"] {
+    border: 1px solid #d9d9d9;
+    border-radius: 22px;
+    padding: 30px 34px 28px 34px;
+    min-height: 520px;
+    box-shadow: none;
+    background: #ffffff;
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #d7d7d7;
+    margin-bottom: 24px;
+}
+
+.icon-bubble {
+    width: 58px;
+    height: 58px;
+    border-radius: 999px;
+    background: #f5eee8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: .2px;
+    margin: 0;
+}
+
+.helper-text {
+    color: #555555;
+    font-size: 18px;
+    line-height: 1.55;
+    margin: 0 0 28px 22px;
+    max-width: 410px;
+}
+
+.upload-visual {
+    border: 2px dashed #d8d8d8;
+    border-radius: 18px;
+    padding: 30px 22px;
+    text-align: center;
+    margin-bottom: 18px;
+    background: #ffffff;
+}
+
+.upload-circle {
+    width: 116px;
+    height: 116px;
+    border-radius: 999px;
+    border: 1px solid #d8d8d8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px auto;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.upload-circle img {
+    width: 104px;
+    max-width: 104px;
+    height: auto;
+    display: block;
+}
+
+.upload-main {
+    font-size: 22px;
+    font-weight: 750;
+    margin-bottom: 6px;
+}
+
+.upload-sub {
+    color: #666666;
+    font-size: 16px;
+}
+
+.empty-result {
+    min-height: 245px;
+    border-radius: 16px;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 96px;
+    padding: 28px;
+}
+
+.empty-title {
+    font-size: 18px;
+    font-weight: 750;
+    margin-top: 18px;
+    margin-bottom: 10px;
+}
+
+.empty-text {
+    color: #666666;
+    font-size: 16px;
+}
+
+.product-title {
+    font-size: 24px;
+    font-weight: 750;
+    margin-top: 18px;
+}
+
+.label {
+    font-size: 13px;
+    color: #777777;
+    letter-spacing: 1.1px;
+    margin-top: 18px;
+}
+
+.value {
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.price {
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.stButton > button,
+.stLinkButton > a {
+    background: #111111 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 9px !important;
+    padding: 13px 22px !important;
+    font-size: 16px !important;
+    font-weight: 750 !important;
+}
+
+.stButton > button:hover,
+.stLinkButton > a:hover {
+    background: #333333 !important;
+    color: #ffffff !important;
+}
+
+[data-testid="stFileUploader"] section {
+    border: 1px solid #e0e0e0;
+    background: #ffffff;
+    border-radius: 12px;
+}
+
+[data-testid="stFileUploader"] button {
+    background: #111111 !important;
+    color: #ffffff !important;
+    border-radius: 9px !important;
+    border: none !important;
+    font-weight: 750 !important;
+}
+
+@media (max-width: 900px) {
     .block-container {
-        max-width: 1240px;
-        padding-top: 18px;
-        padding-bottom: 46px;
+        padding-top: 12px;
     }
 
     .top-logo-wrap {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto 18px auto;
+        margin-bottom: 14px;
     }
 
     .top-logo {
-        width: min(980px, 94vw);
-        height: auto;
-        display: block;
-    }
-
-    [data-testid="stVerticalBlockBorderWrapper"] {
-        border: 1px solid #d9d9d9;
-        border-radius: 22px;
-        padding: 30px 34px 28px 34px;
-        min-height: 520px;
-        box-shadow: none;
-        background: #ffffff;
-    }
-
-    .brand-fallback {
-        text-align: center;
-        margin-bottom: 18px;
-    }
-
-    .brand-title {
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 92px;
-        font-weight: 400;
-        line-height: .9;
-        letter-spacing: -2px;
-        margin: 0;
-    }
-
-    .brand-vision {
-        letter-spacing: 34px;
-        font-size: 28px;
-        margin: 18px 0 0 30px;
-    }
-
-    .brand-line {
-        width: 150px;
-        height: 1px;
-        background: #111111;
-        margin: 22px auto;
-    }
-
-    .brand-catalog {
-        letter-spacing: 12px;
-        font-size: 22px;
-        font-weight: 600;
-    }
-
-    .brand-subtitle {
-        letter-spacing: 10px;
-        font-size: 15px;
-        margin-top: 14px;
-    }
-
-    .section-head {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding-bottom: 24px;
-        border-bottom: 1px solid #d7d7d7;
-        margin-bottom: 24px;
-    }
-
-    .icon-bubble {
-        width: 58px;
-        height: 58px;
-        border-radius: 999px;
-        background: #f5eee8;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 auto;
+        width: min(760px, 96vw);
     }
 
     .section-title {
-        font-size: 28px;
-        font-weight: 800;
-        letter-spacing: .2px;
-        margin: 0;
+        font-size: 22px;
     }
 
     .helper-text {
-        color: #555555;
-        font-size: 18px;
-        line-height: 1.55;
-        margin: 0 0 28px 22px;
-        max-width: 410px;
+        margin-left: 0;
     }
 
-    .upload-visual {
-        border: 2px dashed #d8d8d8;
-        border-radius: 18px;
-        padding: 30px 22px;
-        text-align: center;
-        margin-bottom: 18px;
-        background: #ffffff;
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        min-height: auto;
+        padding: 24px 22px;
     }
-
-    .upload-circle {
-        width: 116px;
-        height: 116px;
-        border-radius: 999px;
-        border: 1px solid #d8d8d8;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 14px auto;
-        background: #ffffff;
-        overflow: hidden;
-    }
-
-    .upload-circle img {
-        width: 104px;
-        max-width: 104px;
-        height: auto;
-        display: block;
-    }
-
-    .upload-main {
-        font-size: 22px;
-        font-weight: 750;
-        margin-bottom: 6px;
-    }
-
-    .upload-sub {
-        color: #666666;
-        font-size: 16px;
-    }
-
-    .empty-result {
-        min-height: 245px;
-        border-radius: 16px;
-        background: #fafafa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        margin-top: 96px;
-        padding: 28px;
-    }
-
-    .empty-title {
-        font-size: 18px;
-        font-weight: 750;
-        margin-top: 18px;
-        margin-bottom: 10px;
-    }
-
-    .empty-text {
-        color: #666666;
-        font-size: 16px;
-    }
-
-    .product-title {
-        font-size: 24px;
-        font-weight: 750;
-        margin-top: 18px;
-    }
-
-    .label {
-        font-size: 13px;
-        color: #777777;
-        letter-spacing: 1.1px;
-        margin-top: 18px;
-    }
-
-    .value {
-        font-size: 22px;
-        font-weight: 500;
-    }
-
-    .price {
-        font-size: 32px;
-        font-weight: 500;
-    }
-
-    .stButton > button,
-    .stLinkButton > a {
-        background: #111111 !important;
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 9px !important;
-        padding: 13px 22px !important;
-        font-size: 16px !important;
-        font-weight: 750 !important;
-    }
-
-    .stButton > button:hover,
-    .stLinkButton > a:hover {
-        background: #333333 !important;
-        color: #ffffff !important;
-    }
-
-    [data-testid="stFileUploader"] section {
-        border: 1px solid #e0e0e0;
-        background: #ffffff;
-        border-radius: 12px;
-    }
-
-    [data-testid="stFileUploader"] button {
-        background: #111111 !important;
-        color: #ffffff !important;
-        border-radius: 9px !important;
-        border: none !important;
-        font-weight: 750 !important;
-    }
-
-    @media (max-width: 900px) {
-        .block-container {
-            padding-top: 12px;
-        }
-
-        .top-logo-wrap {
-            margin-bottom: 14px;
-        }
-
-        .brand-title {
-            font-size: 54px;
-        }
-
-        .brand-vision {
-            font-size: 18px;
-            letter-spacing: 20px;
-            margin-left: 20px;
-        }
-
-        .brand-catalog {
-            font-size: 16px;
-            letter-spacing: 7px;
-        }
-
-        .brand-subtitle {
-            font-size: 12px;
-            letter-spacing: 6px;
-        }
-
-        .section-title {
-            font-size: 22px;
-        }
-
-        .helper-text {
-            margin-left: 0;
-        }
-
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            min-height: auto;
-            padding: 24px 22px;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+}
+</style>
+""")
 
 
 def asset_data_uri(path):
@@ -360,27 +307,21 @@ def cargar_datos():
 header_logo_uri = asset_data_uri(HEADER_LOGO)
 
 if header_logo_uri:
-    st.markdown(
-        f"""
-        <div class="top-logo-wrap">
-            <img class="top-logo" src="{header_logo_uri}">
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    html(f"""
+    <div class="top-logo-wrap">
+        <img class="top-logo" src="{header_logo_uri}">
+    </div>
+    """)
 else:
-    st.markdown(
-        """
-        <div class="brand-fallback">
-            <h1 class="brand-title">ZARA HOME</h1>
-            <div class="brand-vision">VISION</div>
-            <div class="brand-line"></div>
-            <div class="brand-catalog">CATALOGO DE PRODUCTOS</div>
-            <div class="brand-subtitle">IDENTIFICABLES CON IA</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    html("""
+    <div style="text-align:center; margin-bottom:18px;">
+        <h1 style="font-family:Georgia,serif; font-size:92px; font-weight:400; margin:0;">ZARA HOME</h1>
+        <div style="letter-spacing:34px; font-size:28px; margin-left:30px;">VISION</div>
+        <div style="width:150px; height:1px; background:#111; margin:22px auto;"></div>
+        <div style="letter-spacing:12px; font-size:22px; font-weight:600;">CATALOGO DE PRODUCTOS</div>
+        <div style="letter-spacing:10px; font-size:15px; margin-top:14px;">IDENTIFICABLES CON IA</div>
+    </div>
+    """)
 
 
 modelo, procesador = cargar_ia()
@@ -399,25 +340,22 @@ with col1:
         circle_logo_uri = asset_data_uri(CIRCLE_LOGO) or asset_data_uri(HEADER_LOGO)
         circle_logo_html = f'<img src="{circle_logo_uri}">' if circle_logo_uri else ""
 
-        st.markdown(
-            f"""
-            <div class="section-head">
-                <div class="icon-bubble">{svg_camera()}</div>
-                <h2 class="section-title">BUSCA POR IMAGEN</h2>
-            </div>
+        html(f"""
+        <div class="section-head">
+            <div class="icon-bubble">{svg_camera()}</div>
+            <h2 class="section-title">BUSCA POR IMAGEN</h2>
+        </div>
 
-            <p class="helper-text">Sube una foto o usa la camara para identificar un producto.</p>
+        <p class="helper-text">Sube una foto o usa la camara para identificar un producto.</p>
 
-            <div class="upload-visual">
-                <div class="upload-circle">
-                    {circle_logo_html}
-                </div>
-                <div class="upload-main">Selecciona una imagen</div>
-                <div class="upload-sub">Elige galeria o camara</div>
+        <div class="upload-visual">
+            <div class="upload-circle">
+                {circle_logo_html}
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
+            <div class="upload-main">Selecciona una imagen</div>
+            <div class="upload-sub">Elige galeria o camara</div>
+        </div>
+        """)
 
         opcion = st.selectbox(
             "Selecciona una imagen",
@@ -475,15 +413,12 @@ with col1:
 
 with col2:
     with card_container():
-        st.markdown(
-            f"""
-            <div class="section-head">
-                <div class="icon-bubble">{svg_search()}</div>
-                <h2 class="section-title">PRODUCTO IDENTIFICADO</h2>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        html(f"""
+        <div class="section-head">
+            <div class="icon-bubble">{svg_search()}</div>
+            <h2 class="section-title">PRODUCTO IDENTIFICADO</h2>
+        </div>
+        """)
 
         producto = st.session_state.producto
         mejor_score = st.session_state.score
@@ -498,32 +433,17 @@ with col2:
             else:
                 st.info("Imagen oficial no disponible.")
 
-            st.markdown(
-                f'<div class="product-title">{producto["nombre"]}</div>',
-                unsafe_allow_html=True,
-            )
+            html(f'<div class="product-title">{producto["nombre"]}</div>')
 
-            st.markdown('<div class="label">REFERENCIA</div>', unsafe_allow_html=True)
-            st.markdown(
-                f'<div class="value">{producto["referencia"]}</div>',
-                unsafe_allow_html=True,
-            )
+            html('<div class="label">REFERENCIA</div>')
+            html(f'<div class="value">{producto["referencia"]}</div>')
 
-            st.markdown('<div class="label">PRECIO</div>', unsafe_allow_html=True)
-            st.markdown(
-                f'<div class="price">{producto["precio"]}</div>',
-                unsafe_allow_html=True,
-            )
+            html('<div class="label">PRECIO</div>')
+            html(f'<div class="price">{producto["precio"]}</div>')
 
-            st.markdown(
-                '<div class="label">COINCIDENCIA VISUAL</div>',
-                unsafe_allow_html=True,
-            )
+            html('<div class="label">COINCIDENCIA VISUAL</div>')
             st.progress(float(mejor_score))
-            st.markdown(
-                f'<div class="value">{round(mejor_score * 100, 2)}%</div>',
-                unsafe_allow_html=True,
-            )
+            html(f'<div class="value">{round(mejor_score * 100, 2)}%</div>')
 
             st.link_button(
                 "VER PRODUCTO EN ZARA HOME",
@@ -531,15 +451,12 @@ with col2:
                 use_container_width=True,
             )
         else:
-            st.markdown(
-                f"""
-                <div class="empty-result">
-                    <div>
-                        <div class="icon-bubble" style="margin:0 auto;">{svg_bag()}</div>
-                        <div class="empty-title">Sube una imagen para empezar.</div>
-                        <div class="empty-text">El producto identificado aparecera aqui.</div>
-                    </div>
+            html(f"""
+            <div class="empty-result">
+                <div>
+                    <div class="icon-bubble" style="margin:0 auto;">{svg_bag()}</div>
+                    <div class="empty-title">Sube una imagen para empezar.</div>
+                    <div class="empty-text">El producto identificado aparecera aqui.</div>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            </div>
+            """)
