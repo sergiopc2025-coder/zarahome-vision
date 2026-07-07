@@ -15,7 +15,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 .stApp {
-    background: #f7f2eb;
+    background: #ffffff;
     color: #111;
 }
 
@@ -24,21 +24,11 @@ st.markdown("""
     padding-top: 35px;
 }
 
-.logo {
-    text-align: center;
-    font-size: 72px;
-    font-weight: 700;
-    letter-spacing: 5px;
-    color: #111;
-    margin-bottom: -12px;
-}
-
-.vision {
-    text-align: center;
-    font-size: 26px;
-    letter-spacing: 16px;
-    color: #a99070;
-    margin-bottom: 40px;
+.header-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 45px;
 }
 
 .card-title {
@@ -83,8 +73,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="logo">ZARA HOME</div>', unsafe_allow_html=True)
-st.markdown('<div class="vision">VISION</div>', unsafe_allow_html=True)
+try:
+    logo = Image.open("logo.png")
+    st.image(logo, use_container_width=True)
+except:
+    st.markdown("## ZARA HOME VISION")
 
 
 @st.cache_resource
