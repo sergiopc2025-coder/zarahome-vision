@@ -393,16 +393,27 @@ with col1:
             unsafe_allow_html=True,
         )
 
-        archivo = st.file_uploader(
-            "Subir imagen",
-            type=["jpg", "jpeg", "png"],
+        modo = st.radio(
+            "Elige una opcion",
+            ["Subir imagen", "Usar camara"],
+            horizontal=True,
             label_visibility="collapsed",
         )
 
-        st.markdown('<div class="or-divider">o</div>', unsafe_allow_html=True)
+        imagen_fuente = None
 
-        foto_camara = st.camera_input("Usar camara", label_visibility="collapsed")
-        imagen_fuente = archivo or foto_camara
+        if modo == "Subir imagen":
+            imagen_fuente = st.file_uploader(
+                "Subir imagen",
+                type=["jpg", "jpeg", "png"],
+                label_visibility="collapsed",
+            )
+
+        if modo == "Usar camara":
+            imagen_fuente = st.camera_input(
+                "Haz una foto",
+                label_visibility="collapsed",
+            )
 
         if imagen_fuente:
             imagen = Image.open(imagen_fuente).convert("RGB")
@@ -435,7 +446,6 @@ with col1:
 
                     st.session_state.producto = producto
                     st.session_state.score = mejor_score
-
 
 with col2:
     with card_container():
