@@ -1,7 +1,5 @@
-import base64
 import json
 import pickle
-from textwrap import dedent
 
 import streamlit as st
 import torch
@@ -21,11 +19,7 @@ st.set_page_config(
 )
 
 
-def html(content):
-    st.markdown(dedent(content).strip(), unsafe_allow_html=True)
-
-
-html("""
+st.markdown("""
 <style>
 .stApp {
     background: #ffffff;
@@ -34,21 +28,8 @@ html("""
 
 .block-container {
     max-width: 1240px;
-    padding-top: 18px;
+    padding-top: 16px;
     padding-bottom: 46px;
-}
-
-.top-logo-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto 18px auto;
-}
-
-.top-logo {
-    width: min(980px, 94vw);
-    height: auto;
-    display: block;
 }
 
 [data-testid="stVerticalBlockBorderWrapper"] {
@@ -56,130 +37,11 @@ html("""
     border-radius: 22px;
     padding: 30px 34px 28px 34px;
     min-height: 520px;
-    box-shadow: none;
     background: #ffffff;
 }
 
-.section-head {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #d7d7d7;
-    margin-bottom: 24px;
-}
-
-.icon-bubble {
-    width: 58px;
-    height: 58px;
-    border-radius: 999px;
-    background: #f5eee8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-}
-
-.section-title {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: .2px;
-    margin: 0;
-}
-
-.helper-text {
-    color: #555555;
-    font-size: 18px;
-    line-height: 1.55;
-    margin: 0 0 28px 22px;
-    max-width: 410px;
-}
-
-.upload-visual {
-    border: 2px dashed #d8d8d8;
-    border-radius: 18px;
-    padding: 30px 22px;
-    text-align: center;
-    margin-bottom: 18px;
-    background: #ffffff;
-}
-
-.upload-circle {
-    width: 116px;
-    height: 116px;
-    border-radius: 999px;
-    border: 1px solid #d8d8d8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 14px auto;
-    background: #ffffff;
-    overflow: hidden;
-}
-
-.upload-circle img {
-    width: 104px;
-    max-width: 104px;
-    height: auto;
-    display: block;
-}
-
-.upload-main {
-    font-size: 22px;
-    font-weight: 750;
-    margin-bottom: 6px;
-}
-
-.upload-sub {
-    color: #666666;
-    font-size: 16px;
-}
-
-.empty-result {
-    min-height: 245px;
-    border-radius: 16px;
-    background: #fafafa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    margin-top: 96px;
-    padding: 28px;
-}
-
-.empty-title {
-    font-size: 18px;
-    font-weight: 750;
-    margin-top: 18px;
-    margin-bottom: 10px;
-}
-
-.empty-text {
-    color: #666666;
-    font-size: 16px;
-}
-
-.product-title {
-    font-size: 24px;
-    font-weight: 750;
-    margin-top: 18px;
-}
-
-.label {
-    font-size: 13px;
-    color: #777777;
-    letter-spacing: 1.1px;
-    margin-top: 18px;
-}
-
-.value {
-    font-size: 22px;
-    font-weight: 500;
-}
-
-.price {
-    font-size: 32px;
-    font-weight: 500;
+h2, h3 {
+    color: #111111;
 }
 
 .stButton > button,
@@ -190,7 +52,7 @@ html("""
     border-radius: 9px !important;
     padding: 13px 22px !important;
     font-size: 16px !important;
-    font-weight: 750 !important;
+    font-weight: 700 !important;
 }
 
 .stButton > button:hover,
@@ -210,73 +72,10 @@ html("""
     color: #ffffff !important;
     border-radius: 9px !important;
     border: none !important;
-    font-weight: 750 !important;
-}
-
-@media (max-width: 900px) {
-    .block-container {
-        padding-top: 12px;
-    }
-
-    .top-logo-wrap {
-        margin-bottom: 14px;
-    }
-
-    .top-logo {
-        width: min(760px, 96vw);
-    }
-
-    .section-title {
-        font-size: 22px;
-    }
-
-    .helper-text {
-        margin-left: 0;
-    }
-
-    [data-testid="stVerticalBlockBorderWrapper"] {
-        min-height: auto;
-        padding: 24px 22px;
-    }
+    font-weight: 700 !important;
 }
 </style>
-""")
-
-
-def asset_data_uri(path):
-    try:
-        with open(path, "rb") as archivo:
-            encoded = base64.b64encode(archivo.read()).decode("utf-8")
-        return f"data:image/png;base64,{encoded}"
-    except Exception:
-        return ""
-
-
-def svg_camera():
-    return """
-    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14.5 4l1.6 2.4H19a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8.4a2 2 0 0 1 2-2h2.9L9.5 4h5z"/>
-        <circle cx="12" cy="13" r="4"/>
-    </svg>
-    """
-
-
-def svg_search():
-    return """
-    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="7"/>
-        <path d="M20 20l-4.4-4.4"/>
-    </svg>
-    """
-
-
-def svg_bag():
-    return """
-    <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M6 7h12l1 14H5L6 7z"/>
-        <path d="M9 7a3 3 0 0 1 6 0"/>
-    </svg>
-    """
+""", unsafe_allow_html=True)
 
 
 def card_container():
@@ -304,24 +103,16 @@ def cargar_datos():
     return base_vectores, catalogo
 
 
-header_logo_uri = asset_data_uri(HEADER_LOGO)
+try:
+    logo = Image.open(HEADER_LOGO)
+    _, centro, _ = st.columns([1, 3, 1])
+    with centro:
+        st.image(logo, use_container_width=True)
+except Exception:
+    st.markdown("# ZARA HOME VISION")
 
-if header_logo_uri:
-    html(f"""
-    <div class="top-logo-wrap">
-        <img class="top-logo" src="{header_logo_uri}">
-    </div>
-    """)
-else:
-    html("""
-    <div style="text-align:center; margin-bottom:18px;">
-        <h1 style="font-family:Georgia,serif; font-size:92px; font-weight:400; margin:0;">ZARA HOME</h1>
-        <div style="letter-spacing:34px; font-size:28px; margin-left:30px;">VISION</div>
-        <div style="width:150px; height:1px; background:#111; margin:22px auto;"></div>
-        <div style="letter-spacing:12px; font-size:22px; font-weight:600;">CATALOGO DE PRODUCTOS</div>
-        <div style="letter-spacing:10px; font-size:15px; margin-top:14px;">IDENTIFICABLES CON IA</div>
-    </div>
-    """)
+st.write("")
+st.write("")
 
 
 modelo, procesador = cargar_ia()
@@ -337,25 +128,37 @@ col1, col2 = st.columns(2, gap="large")
 
 with col1:
     with card_container():
-        circle_logo_uri = asset_data_uri(CIRCLE_LOGO) or asset_data_uri(HEADER_LOGO)
-        circle_logo_html = f'<img src="{circle_logo_uri}">' if circle_logo_uri else ""
+        icon_col, title_col = st.columns([1, 5])
 
-        html(f"""
-        <div class="section-head">
-            <div class="icon-bubble">{svg_camera()}</div>
-            <h2 class="section-title">BUSCA POR IMAGEN</h2>
-        </div>
+        with icon_col:
+            st.markdown("### 📷")
 
-        <p class="helper-text">Sube una foto o usa la camara para identificar un producto.</p>
+        with title_col:
+            st.markdown("## BUSCA POR IMAGEN")
 
-        <div class="upload-visual">
-            <div class="upload-circle">
-                {circle_logo_html}
-            </div>
-            <div class="upload-main">Selecciona una imagen</div>
-            <div class="upload-sub">Elige galeria o camara</div>
-        </div>
-        """)
+        st.divider()
+
+        st.write("Sube una foto o usa la camara para identificar un producto.")
+
+        upload_box = st.container(border=True)
+        with upload_box:
+            try:
+                circle_logo = Image.open(CIRCLE_LOGO)
+            except Exception:
+                circle_logo = Image.open(HEADER_LOGO)
+
+            _, logo_col, _ = st.columns([1.4, 1, 1.4])
+            with logo_col:
+                st.image(circle_logo, use_container_width=True)
+
+            st.markdown(
+                "<h3 style='text-align:center; margin-bottom:0;'>Selecciona una imagen</h3>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                "<p style='text-align:center; color:#666;'>Elige galeria o camara</p>",
+                unsafe_allow_html=True,
+            )
 
         opcion = st.selectbox(
             "Selecciona una imagen",
@@ -413,12 +216,15 @@ with col1:
 
 with col2:
     with card_container():
-        html(f"""
-        <div class="section-head">
-            <div class="icon-bubble">{svg_search()}</div>
-            <h2 class="section-title">PRODUCTO IDENTIFICADO</h2>
-        </div>
-        """)
+        icon_col, title_col = st.columns([1, 5])
+
+        with icon_col:
+            st.markdown("### 🔍")
+
+        with title_col:
+            st.markdown("## PRODUCTO IDENTIFICADO")
+
+        st.divider()
 
         producto = st.session_state.producto
         mejor_score = st.session_state.score
@@ -433,17 +239,17 @@ with col2:
             else:
                 st.info("Imagen oficial no disponible.")
 
-            html(f'<div class="product-title">{producto["nombre"]}</div>')
+            st.markdown(f"### {producto['nombre']}")
 
-            html('<div class="label">REFERENCIA</div>')
-            html(f'<div class="value">{producto["referencia"]}</div>')
+            st.caption("REFERENCIA")
+            st.markdown(f"## {producto['referencia']}")
 
-            html('<div class="label">PRECIO</div>')
-            html(f'<div class="price">{producto["precio"]}</div>')
+            st.caption("PRECIO")
+            st.markdown(f"# {producto['precio']}")
 
-            html('<div class="label">COINCIDENCIA VISUAL</div>')
+            st.caption("COINCIDENCIA VISUAL")
             st.progress(float(mejor_score))
-            html(f'<div class="value">{round(mejor_score * 100, 2)}%</div>')
+            st.markdown(f"## {round(mejor_score * 100, 2)}%")
 
             st.link_button(
                 "VER PRODUCTO EN ZARA HOME",
@@ -451,12 +257,20 @@ with col2:
                 use_container_width=True,
             )
         else:
-            html(f"""
-            <div class="empty-result">
-                <div>
-                    <div class="icon-bubble" style="margin:0 auto;">{svg_bag()}</div>
-                    <div class="empty-title">Sube una imagen para empezar.</div>
-                    <div class="empty-text">El producto identificado aparecera aqui.</div>
-                </div>
-            </div>
-            """)
+            st.write("")
+            st.write("")
+            st.write("")
+            empty_box = st.container(border=True)
+            with empty_box:
+                st.markdown(
+                    "<h1 style='text-align:center;'>🛍️</h1>",
+                    unsafe_allow_html=True,
+                )
+                st.markdown(
+                    "<h3 style='text-align:center;'>Sube una imagen para empezar.</h3>",
+                    unsafe_allow_html=True,
+                )
+                st.markdown(
+                    "<p style='text-align:center; color:#666;'>El producto identificado aparecera aqui.</p>",
+                    unsafe_allow_html=True,
+                )
